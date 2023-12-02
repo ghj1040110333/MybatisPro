@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.baomidou.mybatis3.mapper.PerfDomainMapper">
+
+    <resultMap id="BaseResultMap" type="com.baomidou.mybatis3.domain.PerfDomain">
+
+    </resultMap>
+
+    <sql id="Base_Column_List">
+
+    </sql>
+
+    <select id="selectAllByTitleAfterAndAppearAfterOrderByAgeDescAndDown" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from PerfDomain
+        where title > #{title,jdbcType=VARCHAR}
+        AND appear > #{appear,jdbcType=VARCHAR}
+        order by age desc
+        , down
+
+    </select>
+    <select id="selectAllByIdAndExact" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from perf_domain
+        <where>
+            <if test="id!= null">id = #{id,jdbcType=VARCHAR}
+            </if>
+            <if test="exact!= null">
+                AND exact = #{exact,jdbcType=VARCHAR}
+            </if>
+        </where>
+
+    </select>
+    <select id="selectAllByIdAndExact" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from perf_domain
+        where id = #{id,jdbcType=VARCHAR}
+        AND exact = #{exact,jdbcType=VARCHAR}
+
+    </select>
+    <select id="selectAllByIdAndExact" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from perf_domain
+        <where>id = #{id,jdbcType=VARCHAR}
+            AND exact = #{exact,jdbcType=VARCHAR}
+        </where>
+
+    </select>
+
+
+</mapper>

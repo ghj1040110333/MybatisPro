@@ -1,0 +1,148 @@
+<idea-plugin require-restart="false" allow-bundled-update="true">
+    <id>com.baomidou.plugin.idea.mybatis</id>
+    <name>MyBatisPro</name>
+    <version>1.0.0</version>
+    <description><![CDATA[
+          MybatisPro plugin
+          Features:
+       <ul>
+          <li>mapper and xml can jump back and forth</li>
+          <li>mybatis.xml,mapper.xml prompt</li>
+          <li>mapper and xml support auto prompt like jpa</li>
+          <li>integrate mybatis generator Gui (copy from free mybatis plugin)</li>
+      </ul>
+      ]]>
+    </description>
+    <vendor>GHJ</vendor>
+    <change-notes><![CDATA[
+      <ul>
+          <li>To Be No.1</li>
+          <li>support two ways of oracle insertBatch</li>
+      </ul>
+      ]]>
+    </change-notes>
+
+    <idea-version since-build="193.0"/>
+    <depends>com.intellij.modules.java</depends>
+    <depends optional="true" config-file="spring.xml">com.intellij.spring</depends>
+    <depends optional="true" config-file="database.xml">com.intellij.database</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+
+        <!--文件描述-->
+        <!--mapper.xml文件属性提示-->
+        <dom.fileDescription id="baomidou.MapperDescription" implementation="com.fruit.plugin.idea.mybatis.dom.description.MapperDescription"/>
+        <!--mybatis配置文件属性提示-->
+        <dom.fileDescription id="baomidou.ConfigurationDescription"
+            implementation="com.fruit.plugin.idea.mybatis.dom.description.ConfigurationDescription"/>
+
+        <!--定义搜索，这个东西用来实现通过Mapper接口类搜索实现类时直接跳转至mapper.xml文件-->
+        <definitionsSearch id="baomidou.MapperDefinitionSearch" implementation="com.fruit.plugin.idea.mybatis.definitionsearch.MapperDefinitionSearch"/>
+
+        <!--项目服务-->
+        <projectService id="baomidou.JavaService" serviceImplementation="com.fruit.plugin.idea.mybatis.service.JavaService"/>
+        <projectService id="baomidou.AnnotationService" serviceImplementation="com.fruit.plugin.idea.mybatis.service.AnnotationService"/>
+        <projectService id="baomidou.EditorService" serviceImplementation="com.fruit.plugin.idea.mybatis.service.EditorService"/>
+        <projectService id="baomidou.AliasFacade" serviceImplementation="com.fruit.plugin.idea.mybatis.alias.AliasFacade"/>
+
+
+        <projectService id="baomidou.MapperLocator" serviceImplementation="com.fruit.plugin.idea.mybatis.locator.MapperLocator"/>
+        <projectService id="baomidou.MapperManager" serviceInterface="com.fruit.plugin.idea.mybatis.core.MapperManager"
+                        serviceImplementation="com.fruit.plugin.idea.mybatis.core.impl.MapperManagerImpl"/>
+
+
+        <!--代码行插件，实现代码导航功能-->
+        <!-- java 跳转到 xml  -->
+        <codeInsight.lineMarkerProvider id="baomidou.MapperLineMarkerProvider" language="JAVA"
+                                        implementationClass="com.fruit.plugin.idea.mybatis.provider.MapperLineMarkerProvider"/>
+        <!-- xml 跳转到 java -->
+        <codeInsight.lineMarkerProvider id="baomidou.StatementLineMarkerProvider" language="XML"
+                                        implementationClass="com.fruit.plugin.idea.mybatis.provider.StatementLineMarkerProvider"/>
+        <!-- 在service层注入了mapper对象, 在这个对象进行跳转到 mapper 类-->
+        <codeInsight.lineMarkerProvider id="baomidou.InjectionLineMarkerProvider" language="JAVA"
+                                        implementationClass="com.fruit.plugin.idea.mybatis.provider.InjectionLineMarkerProvider"/>
+
+        <!--设置中的配置-->
+        <applicationConfigurable id="mybatisx.settings" instance="com.fruit.plugin.idea.mybatis.setting.MybatisConfigurable"/>
+
+        <!--应用服务-->
+        <applicationService id="baomidou.MybatisSetting"
+            serviceImplementation="com.fruit.plugin.idea.mybatis.setting.MybatisSetting"/>
+
+
+        <!--自动完成提示-->
+        <!-- xml 标签提示 -->
+        <completion.contributor id="baomidou.TestParamContributor" language="XML"
+                                implementationClass="com.fruit.plugin.idea.mybatis.contributor.TestParamContributor"/>
+        <!-- 在mapper.xml内部, 进行智能提示, 例如: #{提示位置} -->
+        <completion.contributor id="baomidou.SqlParamCompletionContributor" language="SQL"
+                                implementationClass="com.fruit.plugin.idea.mybatis.contributor.SqlParamCompletionContributor"
+                                order="first"/>
+        <!-- 在mapper类声明方法时, 进行jpa规范的提示, 提示字符串完成后, 后续可以根据字符串生成方法参数和XML内容 -->
+        <completion.contributor id="baomidou.MapperMethodCompletionContributor" language="JAVA"
+                                implementationClass="com.fruit.plugin.idea.mybatis.contributor.MapperMethodCompletionContributor"/>
+
+
+        <!--文件模板组，新建文件选择模板, 这里只是定义一个模板, 在mapper类方法定义完成后, 可以根据这个空模板生成一个文件 -->
+        <fileTemplateGroup id="baomidou.MybatisFileTemplateDescriptorFactory"
+            implementation="com.fruit.plugin.idea.mybatis.template.MybatisFileTemplateDescriptorFactory"/>
+
+        <!--编辑mapper文件时，实现参数提示,  在第一次输入#{}的时候,延迟提示.  没必要 -->
+        <!--        <typedHandler implementation="com.fruit.plugin.idea.mybatis.action.MybatisTypedHandler" id="mybatis" order="first"/>-->
+
+        <!--附加的LiveTemplate模板-->
+        <!-- 影响了不重启插件， 取消这个扩展 -->
+        <defaultLiveTemplatesProvider id="baomidou.SqlLiveTemplateProvider"
+                                      implementation="com.fruit.plugin.idea.mybatis.template.SqlLiveTemplateProvider"/>
+
+        <refactoring.elementListenerProvider id="baomidou.MapperRefactoringProvider"
+            implementation="com.fruit.plugin.idea.mybatis.refactoring.MapperRefactoringProvider"/>
+
+        <!--语法校验，让没有生成代码的方法产生错误-->
+        <localInspection language="JAVA" shortName="MybatisMapperMethodInspection"
+                         id="baomidou.MybatisMapperMethodInspection"
+                         displayName="Mapper method inspection"
+                         groupName="Mybatis" enabledByDefault="true" level="ERROR"
+                         implementationClass="com.fruit.plugin.idea.mybatis.inspection.MapperMethodInspection"/>
+        <localInspection language="XML" shortName="MybatisMapperXmlInspection" enabledByDefault="true" level="ERROR"
+                         id="baomidou.MybatisMapperXmlInspection"
+                         displayName="Mapper xml inspection" groupName="Mybatis"
+                         implementationClass="com.fruit.plugin.idea.mybatis.inspection.MapperXmlInspection"/>
+        <!--实体类属性检测-->
+
+        <!--代码检测抑制器,用于过滤一些spring自带的校验规则-->
+        <lang.inspectionSuppressor language="JAVA" id="baomidou.SpringInspectionsFilter"
+                                   implementationClass="com.fruit.plugin.idea.mybatis.inspection.SpringInspectionsFilter"/>
+
+        <!--提示动作 start-->
+        <!--生成参数注解-->
+        <intentionAction id="baomidou.GenerateParamAnnotationIntention">
+            <className>com.fruit.plugin.idea.mybatis.intention.GenerateParamAnnotationIntention</className>
+        </intentionAction>
+        <!--通过方法名生成对应的 查询语句-->
+        <intentionAction id="baomidou.GenerateStatementIntention">
+            <className>com.fruit.plugin.idea.mybatis.intention.GenerateStatementIntention</className>
+        </intentionAction>
+        <!--生成mybatis mapper.xml文件-->
+        <intentionAction order="first" id="baomidou.GenerateMapperIntention">
+            <className>com.fruit.plugin.idea.mybatis.intention.GenerateMapperIntention</className>
+        </intentionAction>
+
+        <!-- 根据jpa名字生成方法和xml文件内容 -->
+        <intentionAction id="baomidou.GenerateMapperMethodSmartJpaAction">
+            <className>com.fruit.plugin.idea.mybatis.intention.GenerateMapperMethodSmartJpaAction</className>
+        </intentionAction>
+
+        <intentionAction id="baomidou.GenerateMapperMethodSmartAdvanceJpaAction">
+            <className>com.fruit.plugin.idea.mybatis.intention.GenerateMapperMethodSmartJpaAdvanceAction</className>
+        </intentionAction>
+        <!--提示动作 end-->
+
+        <!-- mybatis的xml和mapper类 文件图标都改成一只鸟-->
+        <iconProvider id="baomidou.XmlAndMapperIconProvider"  implementation="com.fruit.plugin.idea.mybatis.provider.XmlAndMapperIconProvider"/>
+
+        <projectService id="baomidou.PersistentConfig" serviceImplementation="com.fruit.plugin.idea.mybatis.setting.PersistentConfig"/>
+
+    </extensions>
+
+</idea-plugin>
