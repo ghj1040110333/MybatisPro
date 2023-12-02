@@ -1,0 +1,70 @@
+<idea-plugin require-restart="false" allow-bundled-update="true">
+  <id>com.baomidou.plugin.idea.mybatis</id>
+  <name>MyBatisPro</name>
+  <version>1.3.2</version>
+  <description>
+          MybatisPro plugin
+          Features:
+       &lt;ul&gt;
+          &lt;li&gt;mapper and xml can jump back and forth&lt;/li&gt;
+          &lt;li&gt;mybatis.xml,mapper.xml prompt&lt;/li&gt;
+          &lt;li&gt;mapper and xml support auto prompt like jpa&lt;/li&gt;
+          &lt;li&gt;integrate mybatis generator Gui (copy from free mybatis plugin)&lt;/li&gt;
+      &lt;/ul&gt;
+      
+    </description>
+  <vendor>GHJ</vendor>
+  <change-notes>
+      &lt;ul&gt;
+          &lt;li&gt;To Be No.1&lt;/li&gt;
+          &lt;li&gt;support two ways of oracle insertBatch&lt;/li&gt;
+      &lt;/ul&gt;
+      
+    </change-notes>
+  <idea-version since-build="193.0"/>
+  <depends>com.intellij.modules.java</depends>
+  <depends optional="true" config-file="spring.xml">com.intellij.spring</depends>
+  <depends optional="true" config-file="database.xml">com.intellij.database</depends>
+  <extensions defaultExtensionNs="com.intellij">
+    <dom.fileDescription id="baomidou.MapperDescription" implementation="com.fruit.plugin.idea.mybatis.dom.description.MapperDescription"/>
+    <dom.fileDescription id="baomidou.ConfigurationDescription" implementation="com.fruit.plugin.idea.mybatis.dom.description.ConfigurationDescription"/>
+    <definitionsSearch id="baomidou.MapperDefinitionSearch" implementation="com.fruit.plugin.idea.mybatis.definitionsearch.MapperDefinitionSearch"/>
+    <projectService id="baomidou.JavaService" serviceImplementation="com.fruit.plugin.idea.mybatis.service.JavaService"/>
+    <projectService id="baomidou.AnnotationService" serviceImplementation="com.fruit.plugin.idea.mybatis.service.AnnotationService"/>
+    <projectService id="baomidou.EditorService" serviceImplementation="com.fruit.plugin.idea.mybatis.service.EditorService"/>
+    <projectService id="baomidou.AliasFacade" serviceImplementation="com.fruit.plugin.idea.mybatis.alias.AliasFacade"/>
+    <projectService id="baomidou.MapperLocator" serviceImplementation="com.fruit.plugin.idea.mybatis.locator.MapperLocator"/>
+    <projectService id="baomidou.MapperManager" serviceInterface="com.fruit.plugin.idea.mybatis.core.MapperManager" serviceImplementation="com.fruit.plugin.idea.mybatis.core.impl.MapperManagerImpl"/>
+    <codeInsight.lineMarkerProvider id="baomidou.MapperLineMarkerProvider" language="JAVA" implementationClass="com.fruit.plugin.idea.mybatis.provider.MapperLineMarkerProvider"/>
+    <codeInsight.lineMarkerProvider id="baomidou.StatementLineMarkerProvider" language="XML" implementationClass="com.fruit.plugin.idea.mybatis.provider.StatementLineMarkerProvider"/>
+    <codeInsight.lineMarkerProvider id="baomidou.InjectionLineMarkerProvider" language="JAVA" implementationClass="com.fruit.plugin.idea.mybatis.provider.InjectionLineMarkerProvider"/>
+    <applicationConfigurable id="mybatisx.settings" instance="com.fruit.plugin.idea.mybatis.setting.MybatisConfigurable"/>
+    <applicationService id="baomidou.MybatisSetting" serviceImplementation="com.fruit.plugin.idea.mybatis.setting.MybatisSetting"/>
+    <completion.contributor id="baomidou.TestParamContributor" language="XML" implementationClass="com.fruit.plugin.idea.mybatis.contributor.TestParamContributor"/>
+    <completion.contributor id="baomidou.SqlParamCompletionContributor" language="SQL" implementationClass="com.fruit.plugin.idea.mybatis.contributor.SqlParamCompletionContributor" order="first"/>
+    <completion.contributor id="baomidou.MapperMethodCompletionContributor" language="JAVA" implementationClass="com.fruit.plugin.idea.mybatis.contributor.MapperMethodCompletionContributor"/>
+    <fileTemplateGroup id="baomidou.MybatisFileTemplateDescriptorFactory" implementation="com.fruit.plugin.idea.mybatis.template.MybatisFileTemplateDescriptorFactory"/>
+    <defaultLiveTemplatesProvider id="baomidou.SqlLiveTemplateProvider" implementation="com.fruit.plugin.idea.mybatis.template.SqlLiveTemplateProvider"/>
+    <refactoring.elementListenerProvider id="baomidou.MapperRefactoringProvider" implementation="com.fruit.plugin.idea.mybatis.refactoring.MapperRefactoringProvider"/>
+    <localInspection language="JAVA" shortName="MybatisMapperMethodInspection" id="baomidou.MybatisMapperMethodInspection" displayName="Mapper method inspection" groupName="Mybatis" enabledByDefault="true" level="ERROR" implementationClass="com.fruit.plugin.idea.mybatis.inspection.MapperMethodInspection"/>
+    <localInspection language="XML" shortName="MybatisMapperXmlInspection" enabledByDefault="true" level="ERROR" id="baomidou.MybatisMapperXmlInspection" displayName="Mapper xml inspection" groupName="Mybatis" implementationClass="com.fruit.plugin.idea.mybatis.inspection.MapperXmlInspection"/>
+    <lang.inspectionSuppressor language="JAVA" id="baomidou.SpringInspectionsFilter" implementationClass="com.fruit.plugin.idea.mybatis.inspection.SpringInspectionsFilter"/>
+    <intentionAction id="baomidou.GenerateParamAnnotationIntention">
+      <className>com.fruit.plugin.idea.mybatis.intention.GenerateParamAnnotationIntention</className>
+    </intentionAction>
+    <intentionAction id="baomidou.GenerateStatementIntention">
+      <className>com.fruit.plugin.idea.mybatis.intention.GenerateStatementIntention</className>
+    </intentionAction>
+    <intentionAction order="first" id="baomidou.GenerateMapperIntention">
+      <className>com.fruit.plugin.idea.mybatis.intention.GenerateMapperIntention</className>
+    </intentionAction>
+    <intentionAction id="baomidou.GenerateMapperMethodSmartJpaAction">
+      <className>com.fruit.plugin.idea.mybatis.intention.GenerateMapperMethodSmartJpaAction</className>
+    </intentionAction>
+    <intentionAction id="baomidou.GenerateMapperMethodSmartAdvanceJpaAction">
+      <className>com.fruit.plugin.idea.mybatis.intention.GenerateMapperMethodSmartJpaAdvanceAction</className>
+    </intentionAction>
+    <iconProvider id="baomidou.XmlAndMapperIconProvider" implementation="com.fruit.plugin.idea.mybatis.provider.XmlAndMapperIconProvider"/>
+    <projectService id="baomidou.PersistentConfig" serviceImplementation="com.fruit.plugin.idea.mybatis.setting.PersistentConfig"/>
+  </extensions>
+</idea-plugin>
